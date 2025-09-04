@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Yeni Solana Tokenleri</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #111; color: #eee; padding: 20px; }
+    h1 { color: #00ffa3; }
+    .token { background: #222; padding: 10px; margin: 10px 0; border-radius: 8px; }
+    .price { color: #0f0; }
+  </style>
+</head>
+<body>
+  <h1>📈 Yeni Solana Tokenleri</h1>
+  <div id="list">Yükleniyor...</div>
+
+  <script>
+    async function fetchPairs() {
+      try {
+        const res = await fetch("/api/pairs");
+        const data = await res.json();
+
+        const container = document.getElementById("list");
+        container.innerHTML = "";
+
+        data.pairs.slice(0, 10).forEach(pair => {
+          const div = document.createElement("div");
+          div.className = "token";
+          div.innerHTML = `
+            <strong>${pair.baseToken.name} (${pair.baseToken.symbol})</strong><br>
+            Pair: ${pair.baseToken.symbol} / ${pair.quoteToken.symbol}<br>
+            Fiyat: <span class="price">$${pair.priceUsd}</span><br>
+            <a href="https://dexscreener.com/solana/${pair.pairAddress}" target="_blank">İncele</a>
+          `;
+          container.appendChild(div);
+        });
+      } catch (err) {
+        console.error("Hata:", err);
+        document.getElementById("list").innerText = "Veri alınamadı!";
+      }
+    }
+
+    fetchPairs();
+    setInterval(fetchPairs, 10000);
+  </script>
+</body>
+</html>
